@@ -1,0 +1,6 @@
+[submodule "lib/Symfony/Component/Console"]
+	path = lib/Symfony/Component/Console
+	url = git://github.com/symfony/Console.git
+[submodule "lib/Symfony/Component/ClassLoader"]
+	path = lib/Symfony/Component/ClassLoader
+	url = git://github.com/symfony/ClassLoader.git
