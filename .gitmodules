@@ -4,3 +4,6 @@
 [submodule "lib/Symfony/Component/ClassLoader"]
 	path = lib/Symfony/Component/ClassLoader
 	url = git://github.com/symfony/ClassLoader.git
+[submodule "lib/devmx/Teamspeak3"]
+	path = lib/devmx/Teamspeak3
+	url = git://github.com/devMX/TeamSpeak3-Framework.git
