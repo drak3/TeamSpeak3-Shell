@@ -35,7 +35,10 @@ class ShellHandler implements CommandHandlerInterface
         $resp = new \devmx\Ts3Shell\CommandResponse();
         $resp->write($proc->getOutput());
         $resp->setExitCode($proc->getExitCode());
-        $resp->getErrorOutput()->write($proc->getErrorOutput());
+        $out = trim($proc->getErrorOutput());
+        if($out !== '') {
+           $resp->getErrorOutput()->writeln('<error>'.$out.'</error>'); 
+        } 
         return $resp;
     }
     

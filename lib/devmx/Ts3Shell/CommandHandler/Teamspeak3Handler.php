@@ -26,6 +26,8 @@ class Teamspeak3Handler implements CommandHandlerInterface
       'login',
       'clientlist',
       'channellist',
+      'servernotifyregister',
+      'help',
       'quit',
     );
     
@@ -55,11 +57,14 @@ class Teamspeak3Handler implements CommandHandlerInterface
         $cResponse = new ShellCommandResponse();
         $cResponse->setExitCode($response->getErrorID());
         if($response->errorOccured()) {
-            $errorMessage = sprintf("%s Error ID: %d", $response->getErrorMessage(), $response->getErrorID());
+            $errorMessage = sprintf("<error>%s. Error ID: %d</error>", $response->getErrorMessage(), $response->getErrorID());
             $cResponse->getErrorOutput()->writeln($errorMessage);
         }
         else {
-            $cResponse->writeln($response->getRawResponse());
+            $output = trim(str_replace('error id=0 msg=ok','',$response->getRawResponse()));
+            if($output !== '') {
+               $cResponse->writeln($output); 
+            }
         }
         return $cResponse;
     }

@@ -18,8 +18,8 @@ class CommandResponse implements \Symfony\Component\Console\Output\ConsoleOutput
     protected $isErrorOutput;
     
     public function __construct() {
-        $this->out = new BufferingOutput();
-        $this->err = new BufferingOutput();
+        $this->out = new BufferingOutput(OutputInterface::VERBOSITY_NORMAL, TRUE);
+        $this->err = new BufferingOutput(OutputInterface::VERBOSITY_NORMAL, TRUE);
     }
     
     public function setExitCode($code) {
