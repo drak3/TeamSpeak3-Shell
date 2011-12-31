@@ -62,6 +62,7 @@ class Teamspeak3Handler implements CommandHandlerInterface
     }
     
     protected $canHandle = Array (
+'login',
 'logout',                     
 'quit',                      
 'use',                         
