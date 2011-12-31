@@ -91,26 +91,49 @@ class Shell {
         
     public function handleLine($line) {
         readline_add_history($line);
-        $command = explode(' ',$line);
-        $command = array_map('trim',$command);
-        foreach($command as $key=>$arg) {
-            if($arg === '') {
-                unset($command[$key]);
-            }
-        }
-        $command = new CommandCall($command[0],$command,$line);
-        foreach($this->handler as $handler) {
-            if($handler->canHandle($command->getName())) {
-                $r = $handler->handle($command);
-                if($this->exit) {
-                    return;
-                }
-                $this->out->write($r->getStandardOutput());
-                $this->out->getErrorOutput()->write($r->getStandardError());
+        $commands = explode('|',$line);
+        $this->executeCommands($commands);
+    }
+    
+    protected function executeCommands(array $commands) {
+        $stdin = '';
+        foreach($commands as $command) {
+            $resp = $this->executeCommand($command,$stdin);
+            if(!$resp) {
                 return;
             }
+            $stdin = $resp->getStandardOutput();
+            $this->out->getErrorOutput()->write($resp->getStandardError());
         }
-        $this->out->getErrorOutput()->writeln(sprintf('<error>%s: Could not find command %s</error>',$this->name, $command->getName()));
+        $this->out->write($stdin);
+    }
+    
+    /**
+     *
+     * @param string $command
+     * @return CommandResponse
+     */
+    protected function executeCommand($command,$stdin) {
+        $args = explode(' ',$command);
+        $args= array_map('trim',$args);
+        foreach($args as $key=>$arg) {
+            if($arg === '') {
+                unset($args[$key]);
+            }
+        }
+        $args = array_values($args);
+        $call = new CommandCall($args[0], $args , $command, $stdin);
+        foreach($this->handler as $handler) {
+            if($handler->canHandle($call->getName())) {
+                $r = $handler->handle($call);
+                if($this->exit) {
+                    return FALSE;
+                }
+                return $r;
+            }
+        }
+        $this->out->getErrorOutput()->writeln(sprintf('<error>%s: Could not find command %s</error>',$this->name, $call->getName()));
+        return FALSE;
     }
     
     protected function buildReadArray() {

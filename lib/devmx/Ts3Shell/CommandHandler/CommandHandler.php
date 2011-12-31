@@ -9,6 +9,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Command\ListCommand;
 use Symfony\Component\Console\Command\HelpCommand;
+use devmx\Ts3Shell\Commands\StdinAwareInterface;
 /**
  *
  * @author drak3
@@ -30,6 +31,10 @@ class CommandHandler extends Application implements CommandHandlerInterface
     
     public function handle(CommandCall $c) {
         $out = new CommandResponse();
+        $command = $this->find($c->getName());
+        if($command instanceof StdinAwareInterface) {
+            $command->setStdin($c->getStdin());
+        }
         $code = $this->run(new StringInput( $c->getRaw()), $out);
         $out->setExitCode($code);
         return $out;

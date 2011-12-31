@@ -53,6 +53,7 @@ class Teamspeak3Handler implements CommandHandlerInterface
         }
         else {
             $output = trim(str_replace('error id=0 msg=ok','',$response->getRawResponse()));
+            $output = str_replace('|', "|\n", $output);
             if($output !== '') {
                $cResponse->writeln($output); 
             }
