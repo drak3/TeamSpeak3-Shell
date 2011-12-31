@@ -92,6 +92,12 @@ class Shell {
     public function handleLine($line) {
         readline_add_history($line);
         $command = explode(' ',$line);
+        $command = array_map('trim',$command);
+        foreach($command as $key=>$arg) {
+            if($arg === '') {
+                unset($command[$key]);
+            }
+        }
         $command = new CommandCall($command[0],$command,$line);
         foreach($this->handler as $handler) {
             if($handler->canHandle($command->getName())) {
@@ -104,7 +110,7 @@ class Shell {
                 return;
             }
         }
-        $this->out->getErrorOutput()->writeln(sprintf('%s<error>Could not find command %s</error>',$command->getName()));
+        $this->out->getErrorOutput()->writeln(sprintf('<error>%s: Could not find command %s</error>',$this->name, $command->getName()));
     }
     
     protected function buildReadArray() {
