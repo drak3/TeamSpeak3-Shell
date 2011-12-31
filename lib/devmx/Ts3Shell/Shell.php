@@ -19,8 +19,10 @@ class Shell {
     protected $name;
     protected $version;
     protected $prompt;
+    protected $useHistory = FALSE;
+    protected $histFile;
     
-    public function __construct($name, $version) {
+    public function __construct($name, $version, $histFile) {
         if(!function_exists('readline')) {
             throw new \RuntimeException('You must have readline extension installed');
         }
@@ -29,7 +31,7 @@ class Shell {
         $this->out = new \Symfony\Component\Console\Output\ConsoleOutput(OutputInterface::VERBOSITY_NORMAL, TRUE);
         $this->name = $name;
         $this->version = $version;
-        
+        $this->histFile = $histFile;
     }
     
     public function addCommandHandler( CommandHandlerInterface $h) {
@@ -61,9 +63,14 @@ class Shell {
         } 
     }
     
+    public function setUseHistory($use) {
+        $this->useHistory = $use;
+    }
+    
     public function runShell($headline,$prompt) {
         $this->out->writeln($headline);
         $this->prompt = $prompt;
+        $this->initHistory();
         readline_callback_handler_install($prompt , array($this,'handleLine'));
         while(!$this->exit) {
             $read = $this->buildReadArray();
@@ -83,11 +90,70 @@ class Shell {
                 }
             }
         }
+        if($this->useHistory) {
+            try {
+                $this->saveHistory($this->histFile);
+                $this->out->writeln('');
+            }
+            catch(\Exception $e) {
+                $this->out->getErrorOutput()->writeln(sprintf('<error>Cannot write history file %s</error>',$this->histFile));
+            }
+        } 
+        else {
+            $this->out->writeln('');
+        }
+    }
+    
+    protected function initHistory() {
+        if($this->useHistory) {
+            try  {
+                $this->loadHistory($this->histFile);
+            }
+            catch(\Exception $e) {
+                $this->out->getErrorOutput()->writeln(sprintf('<error> cannot open history file %s</error>',$this->histFile));
+            }
+        }
+    }
+    
+    public function addHistoryEntry($entry) {
+        if($this->useHistory) {
+            readline_add_history($entry);
+        }    
+    }
+    
+    public function clearHistory() {
+        if($this->useHistory) {
+            readline_clear_history();
+        }
+    }
+    
+    public function loadHistory($file) {
+        if(is_file($file)) {
+            if( is_readable( $file)) {
+                readline_read_history($file);
+            }
+            else {
+                throw new \RuntimeException("cannot load history file $file");
+            } 
+        }
+    }
+    
+    public function saveHistory($file) {
+        if(!is_file( $file)) {
+            touch($file);
+        }
+        if(is_writeable( $file )) {
+            readline_write_history($file);
+        }
+        else {
+            throw new \RuntimeException("cannot save history file $file");
+        }
     }
     
     public function exitShell() {
         $this->exit = TRUE;
     }
+
         
     public function handleLine($line) {
         readline_add_history($line);

@@ -6,31 +6,33 @@ use devmx\Transmission\TCP;
 use devmx\Teamspeak3\Query\Transport\Common\CommandTranslator;
 use devmx\Teamspeak3\Query\Transport\Common\ResponseHandler;
 use devmx\Ts3Shell\ShellJob\Ts3EventWatcher;
+use Symfony\Component\Console\Input;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 $welcome = <<<'EOF'
 Welcome to the devmx TeamSpeak3-Shell
-You can get help for builtins with the shelp command
 You can use shell commands as well as teamspeak3 query command
 EOF;
-
-$help = <<<'EOF'
-
-EOF;
-
 if(PHP_SAPI !== 'cli') {
     die('You must run this script from command line'.PHP_EOL);
 }
-if($_SERVER['argc'] < 3) {
-    die(sprintf('Usage: %s host queryport', $_SERVER['argv'][0]).PHP_EOL);
-}
-
 require_once(__DIR__.'/autoload.php');
 
+$def = new Input\InputDefinition();
+$def->addArgument(new Input\InputArgument( 'host'));
+$def->addArgument(new Input\InputArgument('port', Input\InputArgument::OPTIONAL , '', 10011));
+$def->addOption(new Input\InputOption('history_file', null , Input\InputOption::VALUE_OPTIONAL, '', getenv('HOME').'/.ts3shell_history'));
+$def->addOption(new Input\InputOption('disable-history', 'd', Input\InputOption::VALUE_NONE));
 
-$transmission = new \devmx\Transmission\TCP($_SERVER['argv'][1] , $_SERVER['argv'][2]);
+$input = new Input\ArgvInput();
+$input->bind($def);
+$input->validate();
+
+$transmission = new \devmx\Transmission\TCP($input->getArgument('host') , $input->getArgument('port'));
 $query = new QueryTransport($transmission , new CommandTranslator() , new ResponseHandler());
 
-$shell = new Shell('ts3shell','0.1');
+$shell = new Shell('ts3shell','0.1', $input->getOption('history_file'));
+$shell->setUseHistory(!$input->getOption('disable-history'));
 
 $shell->addCommandHandler(new CommandHandler\Teamspeak3Handler( $query ));
 $shell->addCommandHandler(new CommandHandler\ShellHandler);
