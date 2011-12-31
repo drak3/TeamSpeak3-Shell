@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 namespace devmx\Ts3Shell;
 use devmx\Teamspeak3\Query\QueryTransport;
