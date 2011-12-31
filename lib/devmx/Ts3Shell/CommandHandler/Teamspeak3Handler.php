@@ -27,7 +27,6 @@ class Teamspeak3Handler implements CommandHandlerInterface
       'clientlist',
       'channellist',
       'servernotifyregister',
-      'help',
       'quit',
     );
     
