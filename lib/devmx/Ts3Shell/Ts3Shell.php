@@ -93,7 +93,7 @@ class Ts3Shell
         $transmission = new \devmx\Transmission\TCP($this->host , $this->port);
         $query = new QueryTransport($transmission , new CommandTranslator() , new ResponseHandler());
 
-        $shell = new Shell($this->name,$this->version,$this->welcome);
+        $shell = new Shell($this->name,$this->version,$this->histFile);
         $shell->setUseHistory($this->enableHistory);
 
         $shell->addCommandHandler(new CommandHandler\Teamspeak3Handler( $query ));
