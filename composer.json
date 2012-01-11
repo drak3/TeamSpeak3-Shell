@@ -1,0 +1,8 @@
+{
+    "require": {
+        "devmx/TeamSpeak3-Library": "0.2-alpha-dev",
+        "symfony/console": "v2.1.0-dev",
+        "symfony/process": "v2.1.0-dev",
+        "symfony/class-loader": "v2.1.0-dev"
+    }
+}
