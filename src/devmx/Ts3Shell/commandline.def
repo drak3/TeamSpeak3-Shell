@@ -1,0 +1,4 @@
+commandline = command[;command]*
+command = 
+
+download very_big_file > file || addlog msg="cannot download file"; quit
