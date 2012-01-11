@@ -1,12 +1,10 @@
 <?php
-use \Symfony\Component\ClassLoader\UniversalClassLoader;
-require_once(__DIR__.'/lib/Symfony/Component/ClassLoader/UniversalClassLoader.php');
-
+namespace devmx\Ts3Shell;
+use Symfony\Component\ClassLoader\UniversalClassLoader;
+require_once('vendor/.composer/autoload.php');
 $loader = new UniversalClassLoader();
-$loader->registerNamespaces(Array(
-    'Symfony' => __DIR__.'/lib',
-    'devmx\Ts3Shell' => __DIR__.'/lib',
-    'devmx' => __DIR__.'/lib/devmx/Teamspeak3',
+$loader->registerNamespaces(array(
+   'devmx\Ts3Shell' => 'src' 
 ));
 $loader->register();
 ?>
