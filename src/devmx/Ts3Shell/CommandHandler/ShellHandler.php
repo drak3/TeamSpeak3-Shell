@@ -50,7 +50,7 @@ class ShellHandler implements CommandHandlerInterface
         return $resp;
     }
     
-    public function setShell(\devmx\Ts3Shell\Shell $s) {
+    public function setShell(\devmx\Ts3Shell\Shell\AbstractShell $s) {
         $this->shell = $s;
     }
      

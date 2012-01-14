@@ -1,6 +1,6 @@
 <?php
 namespace devmx\Ts3Shell\CommandHandler;
-use devmx\Ts3Shell\Shell;
+use devmx\Ts3Shell\Shell\AbstractShell;
 use devmx\Ts3Shell\CommandResponse;
 use devmx\Ts3Shell\BufferingOutput;
 use devmx\Ts3Shell\CommandCall;
@@ -20,7 +20,7 @@ class CommandHandler extends Application implements CommandHandlerInterface
     protected $help;
     
     
-    public function setShell(Shell $s) {
+    public function setShell(AbstractShell $s) {
         $this->setAutoExit(FALSE);
         $this->shell = $s;
     }

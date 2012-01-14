@@ -30,7 +30,7 @@ class Teamspeak3Handler implements CommandHandlerInterface
         }
     }
     
-    public function setShell(Shell $s) {
+    public function setShell(Shell\AbstractShell $s) {
         $this->shell = $s;
     }
     

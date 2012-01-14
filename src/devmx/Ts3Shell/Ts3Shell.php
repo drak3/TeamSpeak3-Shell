@@ -93,13 +93,14 @@ class Ts3Shell
         $transmission = new \devmx\Transmission\TCP($this->host , $this->port);
         $query = new QueryTransport($transmission , new CommandTranslator() , new ResponseHandler());
 
-        $shell = new Shell($this->name,$this->version,$this->histFile);
-        $shell->setUseHistory($this->enableHistory);
+        $shell = new Shell\ReadlineShell($this->name,$this->version);
+        $shell->setUseHistoryFile($this->enableHistory);
+        $shell->setHistoryFilePath($this->histFile);
 
         $shell->addCommandHandler(new CommandHandler\Teamspeak3Handler( $query ));
         $shell->addCommandHandler(new CommandHandler\ShellHandler);
 
-        $shell->addJob(new Ts3EventWatcher($transmission));
+        //$shell->addJob(new Ts3EventWatcher($transmission));
         return $shell;
     }
     

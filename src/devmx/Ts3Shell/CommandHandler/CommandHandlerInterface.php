@@ -12,7 +12,7 @@ interface CommandHandlerInterface
      *@return devmx\Ts3Shell\CommandResponse
      */
     public function handle( \devmx\Ts3Shell\CommandCall $call);
-    public function setShell(\devmx\Ts3Shell\Shell $s);
+    public function setShell(  \devmx\Ts3Shell\Shell\AbstractShell $s);
 }
 
 ?>
