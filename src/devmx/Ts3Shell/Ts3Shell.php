@@ -89,18 +89,28 @@ class Ts3Shell
         mkdir($this->userDataDir);
     }
     
-    protected function getShell() {
+    protected function getShell() {    
         $transmission = new \devmx\Transmission\TCP($this->host , $this->port);
         $query = new QueryTransport($transmission , new CommandTranslator() , new ResponseHandler());
-
-        $shell = new Shell\ReadlineShell($this->name,$this->version);
-        $shell->setUseHistoryFile($this->enableHistory);
-        $shell->setHistoryFilePath($this->histFile);
-
+        
+        if(function_exists('readline_callback_handler_install')) {
+            $shell = new Shell\JobShell($this->name, $this->version);
+            $shell->setUseHistoryFile($this->enableHistory);
+            $shell->setHistoryFilePath($this->histFile);
+            $shell->addJob(new Ts3EventWatcher($transmission));
+        }
+        if(function_exists('readline')) {
+            $shell = new Shell\ReadlineShell($this->name, $this->version);
+            $shell->setUseHistoryFile($this->enableHistory);
+            $shell->setHistoryFilePath($this->histFile);
+        } 
+        else {
+            $shell = new Shell\Shell\BasicShell($this->name, $this->version);
+        }
+        
         $shell->addCommandHandler(new CommandHandler\Teamspeak3Handler( $query ));
         $shell->addCommandHandler(new CommandHandler\ShellHandler);
 
-        //$shell->addJob(new Ts3EventWatcher($transmission));
         return $shell;
     }
     
