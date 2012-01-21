@@ -45,8 +45,12 @@ class Teamspeak3Handler implements CommandHandlerInterface
             return;
         }
         $response = $this->query->query($cmd->raw);
+        $events = $this->query->getAllEvents(TRUE);
         $cResponse = new ShellCommandResponse();
         $cResponse->setExitCode($response->getErrorID());
+        foreach($events as $event) {
+            $cResponse->write($event->getRawResponse());
+        }        
         if($response->errorOccured()) {
             $errorMessage = sprintf("<error>%s. Error ID: %d</error>", $response->getErrorMessage(), $response->getErrorID());
             $cResponse->getErrorOutput()->writeln($errorMessage);
