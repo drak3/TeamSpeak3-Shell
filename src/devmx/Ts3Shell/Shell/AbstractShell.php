@@ -77,7 +77,6 @@ abstract class AbstractShell
 
         
     public function handleLine($line) {
-        readline_add_history($line);
         $commands = explode('|',$line);
         $this->executeCommands($commands);
     }
